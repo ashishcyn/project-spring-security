@@ -22,18 +22,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //JDBC authentication(here we used embedded database H2)
         auth.jdbcAuthentication()
-                .dataSource(dataSource) // Using the autowired Datasource
-                .withDefaultSchema() // user table and authority tables are getting created
-                .withUser(
-                        User.withUsername("user")
-                            .password("pass")
-                            .roles("USER")
-                )
-                .withUser(
-                User.withUsername("admin")
-                        .password("pass")
-                        .roles("ADMIN")
-                );
+                .dataSource(dataSource); // Using the autowired Datasource
+                //Default User Schema from documentation:https://docs.spring.io/spring-security/site/docs/current/reference/html5/#user-schema
 
     }
 
