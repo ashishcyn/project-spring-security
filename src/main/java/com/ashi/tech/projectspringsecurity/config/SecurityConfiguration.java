@@ -22,8 +22,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //JDBC authentication(here we used embedded database H2)
         auth.jdbcAuthentication()
-                .dataSource(dataSource); // Using the autowired Datasource
-                //Default User Schema from documentation:https://docs.spring.io/spring-security/site/docs/current/reference/html5/#user-schema
+                .dataSource(dataSource) // Using the autowired Datasource
+                // If we are not using spring security's default schema and want to use our own schema. In this case we can query our custom user table and authority table
+                .usersByUsernameQuery("select username,password,enabled from users where username = ?")
+                .authoritiesByUsernameQuery("select username,authority from authorities where username = ?");
 
     }
 
