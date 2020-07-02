@@ -1,28 +1,39 @@
 package com.ashi.tech.projectspringsecurity.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.sql.DataSource;
 
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    DataSource dataSource;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //Set our configuration on the auth object
-        //Learning purpose: we used inMemoryAuthentication here
-        auth.inMemoryAuthentication()
-                .withUser("foo")
-                .password("foo")
-                .roles("USER")
-                .and()
-                .withUser("admin1")
-                .password("admin1")
-                .roles("ADMIN");
+        //JDBC authentication(here we used embedded database H2)
+        auth.jdbcAuthentication()
+                .dataSource(dataSource) // Using the autowired Datasource
+                .withDefaultSchema() // user table and authority tables are getting created
+                .withUser(
+                        User.withUsername("user")
+                            .password("pass")
+                            .roles("USER")
+                )
+                .withUser(
+                User.withUsername("admin")
+                        .password("pass")
+                        .roles("ADMIN")
+                );
 
     }
 
